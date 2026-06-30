@@ -1,0 +1,17 @@
+# A direct track plus two longer alternatives between two and four.no more than 5 turn for 10 trains.
+stations:
+two,1,1
+four,9,1
+mid_a,5,2
+long_1,3,5
+long_2,5,5
+long_3,7,5
+
+connections:
+two-four
+two-mid_a
+mid_a-four
+two-long_1
+long_1-long_2
+long_2-long_3
+long_3-four
