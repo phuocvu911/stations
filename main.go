@@ -14,7 +14,7 @@ func main() {
 }
 
 func run(args []string) error {
-	args, draw := extractDrawFlag(args)
+	args, _ = extractBonusFlag(args)
 	if len(args) != 4 {
 		return fmt.Errorf("Error: incorrect number of command line arguments\nUsage: go run . [path to network map] [start station] [end station] [number of trains]")
 	}
@@ -43,10 +43,7 @@ func run(args []string) error {
 	if !ok {
 		return fmt.Errorf("Error: no path exists between %q and %q", startName, endName)
 	}
-	if draw {
-		drawSchedule(net, paths, counts)
-		return nil
-	}
+
 	printSchedule(net, paths, counts)
 	return nil
 }

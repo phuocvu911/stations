@@ -12,11 +12,11 @@ const maxStations = 10000
 // Network is the parsed rail network. Stations are referred to by their
 // index into names; conns holds each undirected track exactly once.
 type Network struct {
-	names  []string
-	xs, ys []int
-	index  map[string]int
-	conns  [][2]int //connections between stations in the form of index
-	adj    [][]int  //adjacent stations in adj[v], for example adj[0]= {1,3,4} mean station 0 is next to AND have connection with station 1,3,4
+	names []string
+	//xs, ys []int
+	index map[string]int
+	conns [][2]int //connections between stations in the form of index
+	adj   [][]int  //adjacent stations in adj[v], for example adj[0]= {1,3,4} mean station 0 is next to AND have connection with station 1,3,4
 }
 
 type rawConn struct {
@@ -86,8 +86,8 @@ func parseNetwork(path string) (*Network, error) {
 			coords[[2]int{x, y}] = name
 			net.index[name] = len(net.names) //name -> index lookup, 0,1,2,3,..., because it set before appending name
 			net.names = append(net.names, name)
-			net.xs = append(net.xs, x)
-			net.ys = append(net.ys, y)
+			// net.xs = append(net.xs, x)
+			// net.ys = append(net.ys, y)
 			if len(net.names) > maxStations {
 				return nil, fmt.Errorf("Error: the map contains more than %d stations", maxStations)
 			}
