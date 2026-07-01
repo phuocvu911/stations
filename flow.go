@@ -30,12 +30,12 @@ func (m *trackMap) addTrack(from, to, capacity, cost int) int {
 	idx := len(m.tracks)
 
 	//forward track, always idx 0,2,4,... and reverse track is idx 1,3,5,... in tracks slice
-	m.adjacency[from] = append(m.adjacency[from], idx)
 	m.tracks = append(m.tracks, track{to, capacity, cost})
+	m.adjacency[from] = append(m.adjacency[from], idx)
 
 	//phantom reserve track for return, with negative cost and 0 capacity.they are always shown in pairs
-	m.adjacency[to] = append(m.adjacency[to], idx+1)
 	m.tracks = append(m.tracks, track{from, 0, -cost})
+	m.adjacency[to] = append(m.adjacency[to], idx+1)
 	return idx
 }
 
@@ -64,11 +64,16 @@ func (m *trackMap) findPath(start, end int) (int, bool) {
 		station := queue[0]
 		queue = queue[1:]
 		inQueue[station] = false
-		for _, trackIdx := range m.adjacency[station] {
+		trackIdxs := m.adjacency[station]
+		for _, trackIdx := range trackIdxs {
 			track := m.tracks[trackIdx]
+			//if the track is full or the new distance is not better, skip it
 			if track.capacity <= 0 || distances[station]+track.cost >= distances[track.to] {
 				continue
 			}
+
+			//update the distance and previous edge for the station at the end of this track,
+			//which is literally means "we use this track to get to end station"
 			distances[track.to] = distances[station] + track.cost
 			prevEdge[track.to] = trackIdx
 			if !inQueue[track.to] {
@@ -87,7 +92,7 @@ func (m *trackMap) findPath(start, end int) (int, bool) {
 	//forward track and returning it to the paired reverse track
 	for station := end; station != start; {
 		trackIdx := prevEdge[station]
-		m.tracks[trackIdx].capacity--
+		m.tracks[trackIdx].capacity--     //mark the forward track as used
 		m.tracks[trackIdx^1].capacity++   //XOR with 1 flips the last bit, which is how we paired forward and reverse tracks
 		station = m.tracks[trackIdx^1].to //we have no from so "to" of the reverse track is the previous station
 	}
