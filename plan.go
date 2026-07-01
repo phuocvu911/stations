@@ -9,7 +9,7 @@ import "sort"
 // longer route only pays off when enough trains share the load.
 func planMovements(net *Network, start, end, trains int) (paths [][]int, counts []int, ok bool) {
 	n := len(net.names)
-	g := newFlowGraph(2 * n)
+	g := newTrackMap(2 * n)
 	in := func(v int) int { return 2 * v }
 	out := func(v int) int { return 2*v + 1 }
 	const bigCap = 1 << 30
@@ -18,20 +18,20 @@ func planMovements(net *Network, start, end, trains int) (paths [][]int, counts 
 		if v == start || v == end {
 			c = bigCap
 		}
-		g.addEdge(in(v), out(v), c, 0)
+		g.addTrack(in(v), out(v), c, 0)
 	}
 	connEdges := make([]connEdge, 0, len(net.conns)*2)
 	for _, c := range net.conns {
 		u, v := c[0], c[1]
 		connEdges = append(connEdges,
-			connEdge{u, v, g.addEdge(out(u), in(v), 1, 1)},
-			connEdge{v, u, g.addEdge(out(v), in(u), 1, 1)})
+			connEdge{u, v, g.addTrack(out(u), in(v), 1, 1)},
+			connEdge{v, u, g.addTrack(out(v), in(u), 1, 1)})
 	}
 	maxRoutes := min(trains, len(net.adj[start]), len(net.adj[end]))
 	bestTurns := -1
 	var bestPaths [][]int
 	for k := 0; k < maxRoutes; k++ {
-		cost, found := g.augmentOne(out(start), in(end))
+		cost, found := g.findPath(out(start), in(end))
 		if !found {
 			break
 		}
@@ -61,10 +61,10 @@ func planMovements(net *Network, start, end, trains int) (paths [][]int, counts 
 type connEdge struct{ u, v, idx int }
 
 // decompose extracts the routes carried by the current flow, shortest first.
-func decompose(g *flowGraph, connEdges []connEdge, n, start, end int) [][]int {
+func decompose(g *trackMap, connEdges []connEdge, n, start, end int) [][]int {
 	used := make(map[[2]int]bool)
 	for _, ce := range connEdges {
-		if g.edges[ce.idx].cap == 0 {
+		if g.tracks[ce.idx].cap == 0 {
 			used[[2]int{ce.u, ce.v}] = true
 		}
 	}

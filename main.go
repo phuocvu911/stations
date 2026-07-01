@@ -28,18 +28,18 @@ func run(args []string) error {
 		return err
 	}
 	//fmt.Printf("%+v\n", net)
-	start, ok := net.index[startName]
+	startStation, ok := net.index[startName]
 	if !ok {
 		return fmt.Errorf("Error: start station %q does not exist", startName)
 	}
-	end, ok := net.index[endName]
+	endStation, ok := net.index[endName]
 	if !ok {
 		return fmt.Errorf("Error: end station %q does not exist", endName)
 	}
-	if start == end {
+	if startStation == endStation {
 		return fmt.Errorf("Error: start and end station are the same")
 	}
-	paths, counts, ok := planMovements(net, start, end, numTrains)
+	paths, counts, ok := planMovements(net, startStation, endStation, numTrains)
 	if !ok {
 		return fmt.Errorf("Error: no path exists between %q and %q", startName, endName)
 	}
