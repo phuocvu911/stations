@@ -64,7 +64,7 @@ type connEdge struct{ u, v, idx int }
 func decompose(g *trackMap, connEdges []connEdge, n, start, end int) [][]int {
 	used := make(map[[2]int]bool)
 	for _, ce := range connEdges {
-		if g.tracks[ce.idx].cap == 0 {
+		if g.tracks[ce.idx].capacity == 0 {
 			used[[2]int{ce.u, ce.v}] = true
 		}
 	}
