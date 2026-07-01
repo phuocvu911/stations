@@ -6,7 +6,9 @@ package main
 
 //road from a to b
 type track struct {
-	to, capacity, cost int
+	to       int
+	capacity int
+	cost     int
 }
 
 //map of the railway network
@@ -31,7 +33,7 @@ func (m *trackMap) addTrack(from, to, capacity, cost int) int {
 	m.adjacency[from] = append(m.adjacency[from], idx)
 	m.tracks = append(m.tracks, track{to, capacity, cost})
 
-	//phantom reserve track for return, with negative cost and 0 capacity
+	//phantom reserve track for return, with negative cost and 0 capacity.they are always shown in pairs
 	m.adjacency[to] = append(m.adjacency[to], idx+1)
 	m.tracks = append(m.tracks, track{from, 0, -cost})
 	return idx
