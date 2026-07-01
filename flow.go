@@ -13,11 +13,11 @@ type track struct {
 type trackMap struct {
 	numOfStations int
 	tracks        []track
-	adjacents     [][]int
+	adjacentsList [][]int
 }
 
 func newTrackMap(n int) *trackMap {
-	return &trackMap{numOfStations: n, adjacents: make([][]int, n)}
+	return &trackMap{numOfStations: n, adjacentsList: make([][]int, n)}
 }
 
 // addTrack adds a directed track from "from" to "to" with the
@@ -26,9 +26,13 @@ func newTrackMap(n int) *trackMap {
 // for return.
 func (f *trackMap) addTrack(from, to, capacity, cost int) int {
 	idx := len(f.tracks)
-	f.adjacents[from] = append(f.adjacents[from], idx)
+
+	//forward track
+	f.adjacentsList[from] = append(f.adjacentsList[from], idx)
 	f.tracks = append(f.tracks, track{to, capacity, cost})
-	f.adjacents[to] = append(f.adjacents[to], idx+1)
+
+	//phantom track for return, with negative cost and 0 capacity
+	f.adjacentsList[to] = append(f.adjacentsList[to], idx+1)
 	f.tracks = append(f.tracks, track{from, 0, -cost})
 	return idx
 }
@@ -52,26 +56,33 @@ func (f *trackMap) findPath(start, end int) (int, bool) {
 	distances[start] = 0
 	queue := []int{start}
 	inQueue[start] = true
+
+	//find the shortest path from start to end using a modified Bellman-Ford algorithm
 	for len(queue) > 0 {
 		station := queue[0]
 		queue = queue[1:]
 		inQueue[station] = false
-		for _, ei := range f.adjacents[station] {
-			e := f.tracks[ei]
+		for _, adjacents := range f.adjacentsList[station] {
+			e := f.tracks[adjacents]
 			if e.cap <= 0 || distances[station]+e.cost >= distances[e.to] {
 				continue
 			}
 			distances[e.to] = distances[station] + e.cost
-			prevs[e.to] = ei
+			prevs[e.to] = adjacents
 			if !inQueue[e.to] {
 				queue = append(queue, e.to)
 				inQueue[e.to] = true
 			}
 		}
 	}
+
+	//log if no path was found
 	if prevs[end] == -1 {
 		return 0, false
 	}
+
+	//update the capacities of the tracks along the path found, use the capacity of the forward track
+	// and increase the capacity of the reverse edge, go from end to start, following the previous stations
 	for station := end; station != start; {
 		from := prevs[station]
 		f.tracks[from].cap--
