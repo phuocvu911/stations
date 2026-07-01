@@ -6,3 +6,5 @@ func extractBonusFlag(args []string) ([]string, bool) {
 	}
 	return args, false
 }
+
+//each train has it own color, and each station has its own color??
