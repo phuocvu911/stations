@@ -7,7 +7,7 @@ import "sort"
 // movement turns. It tries every route-set size k (the cheapest k routes by
 // total length, via successive shortest augmentations), because adding a
 // longer route only pays off when enough trains share the load.
-func planMovements(net *Network, start, end, trains int) (paths [][]int, counts []int, ok bool) {
+func planMovements(net *Network, start, end, numTrains int) (paths [][]int, counts []int, ok bool) {
 	n := len(net.names)
 	g := newTrackMap(2 * n)
 	in := func(v int) int { return 2 * v }
@@ -27,7 +27,7 @@ func planMovements(net *Network, start, end, trains int) (paths [][]int, counts 
 			connEdge{u, v, g.addTrack(out(u), in(v), 1, 1)},
 			connEdge{v, u, g.addTrack(out(v), in(u), 1, 1)})
 	}
-	maxRoutes := min(trains, len(net.adj[start]), len(net.adj[end]))
+	maxRoutes := min(numTrains, len(net.adj[start]), len(net.adj[end]))
 	bestTurns := -1
 	var bestPaths [][]int
 	for k := 0; k < maxRoutes; k++ {
@@ -45,7 +45,7 @@ func planMovements(net *Network, start, end, trains int) (paths [][]int, counts 
 		for i, p := range ps {
 			lengths[i] = len(p) - 1
 		}
-		turns := minTurns(lengths, trains)
+		turns := minTurns(lengths, numTrains)
 		if bestTurns < 0 || turns < bestTurns {
 			bestTurns = turns
 			bestPaths = ps
@@ -54,7 +54,7 @@ func planMovements(net *Network, start, end, trains int) (paths [][]int, counts 
 	if bestTurns < 0 {
 		return nil, nil, false
 	}
-	return bestPaths, assignTrains(bestPaths, trains, bestTurns), true
+	return bestPaths, assignTrains(bestPaths, numTrains, bestTurns), true
 }
 
 // connEdge remembers which flow edge models each direction of a track.
@@ -103,11 +103,11 @@ func decompose(g *trackMap, connEdges []connEdge, n, start, end int) [][]int {
 // minTurns is the fewest turns needed to move the given number of trains
 // over routes of the given lengths: a route of length L pipelines one train
 // per turn, so within T turns it delivers T-L+1 trains.
-func minTurns(lengths []int, trains int) int {
-	lo, hi := lengths[0], lengths[0]+trains-1
+func minTurns(lengths []int, numTrains int) int {
+	lo, hi := lengths[0], lengths[0]+numTrains-1
 	for lo < hi {
 		mid := (lo + hi) / 2
-		if capacityWithin(lengths, mid) >= trains {
+		if capacityWithin(lengths, mid) >= numTrains {
 			hi = mid
 		} else {
 			lo = mid + 1
@@ -129,7 +129,7 @@ func capacityWithin(lengths []int, turns int) int {
 // assignTrains decides how many trains run down each route so that every
 // train still arrives within the given number of turns; surplus capacity is
 // trimmed from the longest routes first.
-func assignTrains(paths [][]int, trains, turns int) []int {
+func assignTrains(paths [][]int, numTrains, turns int) []int {
 	counts := make([]int, len(paths))
 	total := 0
 	for i, p := range paths {
@@ -140,8 +140,8 @@ func assignTrains(paths [][]int, trains, turns int) []int {
 		counts[i] = c
 		total += c
 	}
-	for i := len(counts) - 1; i >= 0 && total > trains; i-- {
-		d := min(counts[i], total-trains)
+	for i := len(counts) - 1; i >= 0 && total > numTrains; i-- {
+		d := min(counts[i], total-numTrains)
 		counts[i] -= d
 		total -= d
 	}
