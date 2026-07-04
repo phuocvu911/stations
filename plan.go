@@ -24,7 +24,7 @@ func planMovements(net *Network, start, end, numTrains int) (paths [][]int, trai
 	out := func(stationIdx int) int { return 2*stationIdx + 1 } //exit node
 
 	//add a track from in to out for each station, with capacity 1 (except for start and end stations, which have infinite capacity). This ensures that each intermediate station can only be used by one train at a time.
-	for stationIdx := 0; stationIdx < numStations; stationIdx++ {
+	for stationIdx := range numStations {
 		capacity := 1
 		if stationIdx == start || stationIdx == end {
 			capacity = bigCap

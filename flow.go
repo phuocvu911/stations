@@ -18,6 +18,7 @@ type trackMap struct {
 	adjacency   [][]int //adjacency list of track indices (in 'tracks' slice) for each station
 }
 
+// newTrackMap creates a new trackMap with the given number of stations and initializes the adjacency list.
 func newTrackMap(n int) *trackMap {
 	return &trackMap{numStations: n, adjacency: make([][]int, n)}
 }
