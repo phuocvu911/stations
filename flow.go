@@ -22,11 +22,11 @@ func newTrackMap(n int) *trackMap {
 	return &trackMap{numStations: n, adjacency: make([][]int, n)}
 }
 
-// addTrack adds a directed track from "from" to "to" with the
+// AddTrack adds a directed track from "from" to "to" with the
 // given capacity and cost, returning the index of the forward edge.
 // The reverse edge is added automatically with capacity 0 and negative cost
 // for return.
-func (m *trackMap) addTrack(from, to, capacity, cost int) int {
+func (m *trackMap) AddTrack(from, to, capacity, cost int) int {
 	idx := len(m.tracks)
 
 	//forward track, always idx 0,2,4,... and reverse track is idx 1,3,5,... in tracks slice
@@ -44,7 +44,7 @@ const infCost = int(1) << 60
 //This function dispatches one train from start station to end station along the
 //cheapest open route, and marks that route as used. It returns (how far the train
 //traveled, did it make it?)
-func (m *trackMap) findPath(start, end int) (int, bool) {
+func (m *trackMap) FindPath(start, end int) (int, bool) {
 	distances := make([]int, m.numStations)
 	prevEdge := make([]int, m.numStations)
 	inQueue := make([]bool, m.numStations)

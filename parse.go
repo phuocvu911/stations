@@ -10,13 +10,13 @@ import (
 const maxStations = 10000
 
 // Network is the parsed rail network. Stations are referred to by their
-// index into names; conns holds each undirected track exactly once.
+// index into stationNames; conns holds each undirected track exactly once.
 type Network struct {
-	names []string
+	stationNames []string
 	//xs, ys []int
-	index map[string]int
-	conns [][2]int //connections between stations in the form of index
-	adj   [][]int  //adjacent stations in adj[v], for example adj[0]= {1,3,4} mean station 0 is next to AND have connection with station 1,3,4
+	index       map[string]int //station name -> index lookup
+	connections [][2]int       //connections between stations in the form of index
+	adj         [][]int        //adjacent stations in adj[v], for example adj[0]= {1,3,4} mean station 0 is next to AND have connection with station 1,3,4
 }
 
 type rawConn struct {
@@ -84,11 +84,11 @@ func parseNetwork(path string) (*Network, error) {
 				return nil, fmt.Errorf("Error: stations %q and %q exist at the same coordinates %d,%d", otherStation, name, x, y)
 			}
 			coords[[2]int{x, y}] = name
-			net.index[name] = len(net.names) //name -> index lookup, 0,1,2,3,..., because it set before appending name
-			net.names = append(net.names, name)
+			net.index[name] = len(net.stationNames) //name -> index lookup, 0,1,2,3,..., because it set before appending name
+			net.stationNames = append(net.stationNames, name)
 			// net.xs = append(net.xs, x)
 			// net.ys = append(net.ys, y)
-			if len(net.names) > maxStations {
+			if len(net.stationNames) > maxStations {
 				return nil, fmt.Errorf("Error: the map contains more than %d stations", maxStations)
 			}
 		case "connections":
@@ -107,7 +107,7 @@ func parseNetwork(path string) (*Network, error) {
 	if !sawConns {
 		return nil, fmt.Errorf("Error: the map does not contain a \"connections:\" section")
 	}
-	net.adj = make([][]int, len(net.names))
+	net.adj = make([][]int, len(net.stationNames))
 	connSeen := make(map[[2]int]bool)
 	for _, rc := range rawConns {
 		ia, okA := net.index[rc.a]
@@ -126,7 +126,7 @@ func parseNetwork(path string) (*Network, error) {
 			return nil, fmt.Errorf("Error: duplicate connection between %q and %q (line %d)", rc.a, rc.b, rc.line)
 		}
 		connSeen[key] = true
-		net.conns = append(net.conns, [2]int{ia, ib})
+		net.connections = append(net.connections, [2]int{ia, ib})
 		net.adj[ia] = append(net.adj[ia], ib)
 		net.adj[ib] = append(net.adj[ib], ia)
 	}

@@ -51,7 +51,7 @@ func simulate(paths [][]int, counts []int, names []string, visit func(movements 
 func printSchedule(net *Network, paths [][]int, counts []int) {
 	w := bufio.NewWriter(os.Stdout)
 	defer w.Flush()
-	simulate(paths, counts, net.names, func(movements []string, _ []simTrain) {
+	simulate(paths, counts, net.stationNames, func(movements []string, _ []simTrain) {
 		fmt.Fprintln(w, strings.Join(movements, " "))
 	})
 }

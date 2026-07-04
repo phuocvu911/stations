@@ -2,37 +2,51 @@ package main
 
 import "sort"
 
-// planMovements finds the set of vertex-disjoint routes and the number of
+const bigCap = 1 << 60
+
+// directedTrack represents a directed track from one station to another, along with the index of the forward edge in the trackMap.tracks slice.
+type directedTrack struct {
+	from int
+	to   int
+	idx  int //index of the forward edge in the trackMap.tracks slice
+}
+
+// planMovements finds the set of vertex-disjoint routes (non-overlapping) and the number of
 // trains to send down each route which together minimise the number of
 // movement turns. It tries every route-set size k (the cheapest k routes by
 // total length, via successive shortest augmentations), because adding a
 // longer route only pays off when enough trains share the load.
-func planMovements(net *Network, start, end, numTrains int) (paths [][]int, counts []int, ok bool) {
-	n := len(net.names)
-	g := newTrackMap(2 * n)
-	in := func(v int) int { return 2 * v }
-	out := func(v int) int { return 2*v + 1 }
-	const bigCap = 1 << 30
-	for v := 0; v < n; v++ {
-		c := 1
-		if v == start || v == end {
-			c = bigCap
+func planMovements(net *Network, start, end, numTrains int) (paths [][]int, trainsEachPath []int, ok bool) {
+	numStations := len(net.stationNames)
+	trackMap := newTrackMap(2 * numStations) //each station is split into an "in" and "out" node, with a track of capacity 1 between them. So it needs double the number of stations to represent the split network.
+
+	in := func(stationIdx int) int { return 2 * stationIdx }    //entry node
+	out := func(stationIdx int) int { return 2*stationIdx + 1 } //exit node
+
+	//add a track from in to out for each station, with capacity 1 (except for start and end stations, which have infinite capacity). This ensures that each intermediate station can only be used by one train at a time.
+	for stationIdx := 0; stationIdx < numStations; stationIdx++ {
+		capacity := 1
+		if stationIdx == start || stationIdx == end {
+			capacity = bigCap
 		}
-		g.addTrack(in(v), out(v), c, 0)
+
+		//mimic 1 train at 1 stattion at a time
+		trackMap.AddTrack(in(stationIdx), out(stationIdx), capacity, 0) //...→ in(victoria) ══[cap 1]══> out(victoria) →...
 	}
-	connEdges := make([]connEdge, 0, len(net.conns)*2)
-	for _, c := range net.conns {
-		u, v := c[0], c[1]
-		connEdges = append(connEdges,
-			connEdge{u, v, g.addTrack(out(u), in(v), 1, 1)},
-			connEdge{v, u, g.addTrack(out(v), in(u), 1, 1)})
+	directedTracks := make([]directedTrack, 0, len(net.connections)*2) //each undirected connection is represented by two directed tracks, one in each direction
+	for _, connection := range net.connections {
+		from, to := connection[0], connection[1]
+		directedTracks = append(directedTracks,
+			directedTrack{from, to, trackMap.AddTrack(out(from), in(to), 1, 1)}, //foward track
+			directedTrack{to, from, trackMap.AddTrack(out(to), in(from), 1, 1)}) //reverse track
 	}
+
 	maxRoutes := min(numTrains, len(net.adj[start]), len(net.adj[end]))
 	bestTurns := -1
 	var bestPaths [][]int
-	for k := 0; k < maxRoutes; k++ {
-		cost, found := g.findPath(out(start), in(end))
-		if !found {
+	for range maxRoutes {
+		cost, found := trackMap.FindPath(out(start), in(end))
+		if !found { //"no path exists between start and end`err"
 			break
 		}
 		// Augmentation costs never decrease, so once a new route is at
@@ -40,7 +54,7 @@ func planMovements(net *Network, start, end, numTrains int) (paths [][]int, coun
 		if bestTurns >= 0 && cost >= bestTurns {
 			break
 		}
-		ps := decompose(g, connEdges, n, start, end)
+		ps := decompose(trackMap, directedTracks, numStations, start, end)
 		lengths := make([]int, len(ps))
 		for i, p := range ps {
 			lengths[i] = len(p) - 1
@@ -57,15 +71,12 @@ func planMovements(net *Network, start, end, numTrains int) (paths [][]int, coun
 	return bestPaths, assignTrains(bestPaths, numTrains, bestTurns), true
 }
 
-// connEdge remembers which flow edge models each direction of a track.
-type connEdge struct{ u, v, idx int }
-
 // decompose extracts the routes carried by the current flow, shortest first.
-func decompose(g *trackMap, connEdges []connEdge, n, start, end int) [][]int {
+func decompose(g *trackMap, connEdges []directedTrack, n, start, end int) [][]int {
 	used := make(map[[2]int]bool)
 	for _, ce := range connEdges {
 		if g.tracks[ce.idx].capacity == 0 {
-			used[[2]int{ce.u, ce.v}] = true
+			used[[2]int{ce.from, ce.to}] = true
 		}
 	}
 	// Opposite directions on the same track cancel out.
@@ -78,8 +89,8 @@ func decompose(g *trackMap, connEdges []connEdge, n, start, end int) [][]int {
 	}
 	next := make([][]int, n)
 	for _, ce := range connEdges {
-		if used[[2]int{ce.u, ce.v}] {
-			next[ce.u] = append(next[ce.u], ce.v)
+		if used[[2]int{ce.from, ce.to}] {
+			next[ce.from] = append(next[ce.from], ce.to)
 		}
 	}
 	var paths [][]int

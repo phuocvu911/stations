@@ -23,50 +23,9 @@ Each output line is one turn; `T1-victoria` means train T1 moves to
 victoria during that turn. All errors are reported on stderr with a
 message starting with `Error:` and a non-zero exit code.
 
-## Bonus: -draw
+## Bonus: 
 
-```
-go run . -draw maps/london.map waterloo st_pancras 4
-```
 
-`-draw` (or `--draw`) renders the network as ASCII art in the subject's
-style — an x-axis header, y coordinates down the left, stations as
-`X <- name`, tracks drawn with `- | / \` — and then replays the schedule
-turn by turn with train positions overlaid on the map:
-
-```
-0   1  2  3  4  5  6  7  8  9  10 11
-1         X <- waterloo [2 waiting]
-2          \
-3           \
-4            \
-5             \
-6              \
-7               \--X <- victoria [T1]
-8                \/
-9                /\
-10              /  \
-11              |   \
-12              |    \
-13              |     \
-14              |      \
-15              X <- st_pancras
-16               \       \
-...
-23                      \-------+-X <- euston [T2]
-```
-
-`[T1]` marks a train at a station; the start and end stations show
-`[n waiting]` / `[n arrived]` tallies. When stdout is a terminal the
-frames animate in place (one frame every 0.5s); when piped the frames are
-printed one after another. Each frame is preceded by the turn's movement
-line (`Turn 2: T1-st_pancras T2-st_pancras ...`).
-
-The flag does not change the default behaviour: without `-draw` the
-output is exactly the plain schedule required by the subject. The grid is
-true to the station coordinates; maps whose coordinates would not fit on
-a screen fall back to a scaled rendering without the axes, and on
-overcrowded rows labels are truncated rather than drawn over each other.
 
 ## How it works
 
