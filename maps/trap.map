@@ -1,0 +1,25 @@
+# "The trap" — the shortest route a-b-c-z blocks all alternatives.
+# A correct min-cost-flow solver must revise that choice and instead
+# use the disjoint pair a-b-e-z and a-d-c-z. Start: a, End: z.
+#
+#   a -- b -- c -- z        shortest route: a-b-c-z  (length 3)
+#   |    \--- e -- z
+#   \--- d -- c
+#no more than 5 turns when moving a-z 5 trains
+
+stations:
+a,0,0
+b,2,0
+c,4,0
+z,6,0
+e,3,2
+d,1,4
+
+connections:
+a-b
+b-c
+c-z
+b-e
+e-z
+a-d
+d-c
