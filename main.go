@@ -22,7 +22,7 @@ func run(args []string) error {
 	mapPath, startName, endName := args[0], args[1], args[2]
 	numTrains, err := strconv.Atoi(args[3])
 	if err != nil || numTrains <= 0 {
-		return fmt.Errorf("Error: number of trains is not a valid positive integer")
+		return fmt.Errorf("Error: number of trains (%d) is not a valid positive integer", numTrains)
 	}
 
 	net, err := parseNetwork(mapPath)

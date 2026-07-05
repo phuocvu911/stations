@@ -6,6 +6,13 @@ station at a time, and each track may be used once per turn.
 
 ## Usage
 
+### Clone the project 
+```
+git clone https://gitea.kood.tech/hoangphuocvu/pathfinder
+cd pathfinder
+```
+
+### Run
 ```
 go run . [path to network map] [start station] [end station] [number of trains]
 ```
@@ -22,10 +29,6 @@ T3-st_pancras T4-st_pancras
 Each output line is one turn; `T1-victoria` means train T1 moves to
 victoria during that turn. All errors are reported on stderr with a
 message starting with `Error:` and a non-zero exit code.
-
-## Bonus: 
-
-
 
 ## How it works
 
@@ -50,3 +53,23 @@ message starting with `Error:` and a non-zero exit code.
 
 This handles large cyclic maps gracefully: a 10,000-station map with 30,000
 connections schedules 100 trains in well under a second.
+
+## Extras
+
+### Super Advanced Error Handling
+In any cases of error, the program prints out `<Time> Error: <explaining what happend and what clause cause err>`
+
+Example:
+```
+go run . maps/london.map waterloo st_pancras -2
+
+2026/07/05 19:29:47 Error: number of trains (-2) is not a valid positive integer
+```
+```
+go run . maps/london.map waterloo hakaniemi 4
+
+2026/07/05 19:34:18 Error: end station "hakaniemi" does not exist
+```
+### Suits of Tests
+
+### Bonus
