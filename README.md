@@ -34,7 +34,7 @@ message starting with `Error:` and a non-zero exit code.
 
 1. **Parse** the map (`parse.go`): sections, comments, whitespace, and all
    the validation rules (names, coordinates, duplicates, 10k-station limit,
-   connections to unknown stations, duplicate/reversed connections, ...).
+   connections to unknown stations, duplicate/reversed connections, ...). Station name got indexed for even better performance.
 2. **Find routes** (`flow.go`, `plan.go`): the network is turned into a flow
    graph where every intermediate station is split into an in/out node pair
    of capacity 1, so one unit of flow is one vertex-disjoint route.
@@ -48,8 +48,6 @@ message starting with `Error:` and a non-zero exit code.
    long to ever help.
 4. **Simulate** (`schedule.go`): each turn, every en-route train advances one
    station and each route admits one new train, printing one line per turn.
-   The `-draw` rendering (`draw.go`) replays the same simulation and plots
-   it on a coordinate-scaled ASCII map instead.
 
 This handles large cyclic maps gracefully: a 10,000-station map with 30,000
 connections schedules 100 trains in well under a second.
