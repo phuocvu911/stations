@@ -34,7 +34,7 @@ func (m *trackMap) AddTrack(from, to, capacity, cost int) int {
 	m.tracks = append(m.tracks, track{to, capacity, cost})
 	m.adjacency[from] = append(m.adjacency[from], idx)
 
-	//phantom reserve track for return, with negative cost and 0 capacity.they are always shown in pairs
+	//phantom reverse track for return, with negative cost and 0 capacity.they are always shown in pairs
 	m.tracks = append(m.tracks, track{from, 0, -cost})
 	m.adjacency[to] = append(m.adjacency[to], idx+1)
 	return idx
@@ -47,13 +47,13 @@ const infCost = int(1) << 60
 //traveled, did it make it?)
 func (m *trackMap) FindPath(start, end int) (int, bool) {
 	distances := make([]int, m.numStations)
-	prevEdge := make([]int, m.numStations)
+	prevEdges := make([]int, m.numStations)
 	inQueue := make([]bool, m.numStations)
 
 	//start dumb, every station is unreachable and we came from nowhere at first
 	for i := range distances {
 		distances[i] = infCost
-		prevEdge[i] = -1
+		prevEdges[i] = -1
 	}
 	//distance from start to start is 0
 	distances[start] = 0
@@ -76,7 +76,7 @@ func (m *trackMap) FindPath(start, end int) (int, bool) {
 			//update the distance and previous edge for the station at the end of this track,
 			//which is literally means "we use this track to get to end station"
 			distances[track.to] = distances[station] + track.cost
-			prevEdge[track.to] = trackIdx
+			prevEdges[track.to] = trackIdx
 			if !inQueue[track.to] {
 				queue = append(queue, track.to)
 				inQueue[track.to] = true
@@ -85,14 +85,14 @@ func (m *trackMap) FindPath(start, end int) (int, bool) {
 	}
 
 	//no path was found
-	if prevEdge[end] == -1 {
+	if prevEdges[end] == -1 {
 		return 0, false
 	}
 
 	//walk the path from end to start, spending one unit of capacity on each
-	//forward track and returning it to the paired reverse track
+	//forward track and returning it to the paired reverse track, mimic ptr behaveior
 	for station := end; station != start; {
-		trackIdx := prevEdge[station]
+		trackIdx := prevEdges[station]
 		m.tracks[trackIdx].capacity--     //mark the forward track as used
 		m.tracks[trackIdx^1].capacity++   //XOR with 1 flips the last bit, which is how we paired forward and reverse tracks
 		station = m.tracks[trackIdx^1].to //we have no from so "to" of the reverse track is the previous station
