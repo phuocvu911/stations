@@ -89,6 +89,7 @@ func decompose(m *trackMap, directedTracks []directedTrack, numStations, start, 
 	}
 
 	// Opposite directions on the same track cancel out, drop it
+	//becomes handy when in trap.map
 	for key := range used {
 		rev := [2]int{key[1], key[0]}
 		if used[rev] && used[key] {

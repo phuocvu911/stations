@@ -4,14 +4,14 @@ package main
 // capacity 1, so each unit of flow is one vertex-disjoint route and each
 // augmentation yields the cheapest set of k routes by total length.
 
-//road from a to b
+// road from a to b
 type track struct {
 	to       int
 	capacity int
 	cost     int
 }
 
-//map of the railway network
+// map of the railway network
 type trackMap struct {
 	numStations int
 	tracks      []track
@@ -34,7 +34,7 @@ func (m *trackMap) AddTrack(from, to, capacity, cost int) int {
 	m.tracks = append(m.tracks, track{to, capacity, cost})
 	m.adjacency[from] = append(m.adjacency[from], idx)
 
-	//phantom reverse track for return, with negative cost and 0 capacity.they are always shown in pairs
+	//phantom reverse track for return, with negative cost and 0 capacity.they are always shown in pairs, becomes handy in trap.map
 	m.tracks = append(m.tracks, track{from, 0, -cost})
 	m.adjacency[to] = append(m.adjacency[to], idx+1)
 	return idx
@@ -42,9 +42,9 @@ func (m *trackMap) AddTrack(from, to, capacity, cost int) int {
 
 const infCost = int(1) << 60
 
-//This function dispatches one train from start station to end station along the
-//cheapest open route, and marks that route as used. It returns (how far the train
-//traveled, did it make it?)
+// This function dispatches one train from start station to end station along the
+// cheapest open route, and marks that route as used. It returns (how far the train
+// traveled, did it make it?)
 func (m *trackMap) FindPath(start, end int) (int, bool) {
 	distances := make([]int, m.numStations)
 	prevEdges := make([]int, m.numStations)
