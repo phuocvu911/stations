@@ -4,7 +4,7 @@ waterloo  , 3 , 1
 victoria,6,7
 
 # north stations
-euston,1,5
+euston-my-love,1,5
 st_pancras,5,15 # international
 
 connections:

@@ -73,7 +73,7 @@ func parseNetwork(path string) (*Network, error) {
 			x, okX := parsePositiveInt(strings.TrimSpace(parts[1]))
 			y, okY := parsePositiveInt(strings.TrimSpace(parts[2]))
 			if !okX || !okY {
-				return nil, fmt.Errorf("Error: station %q has a coordinate which is not a valid positive integer (line %d)", name, lineNo)
+				return nil, fmt.Errorf("Error: station %q has a coordinate (%d, %d) which is not a valid positive integer (line %d)", name, x, y, lineNo)
 			}
 			//check duplicate station
 			if _, dup := net.index[name]; dup {
@@ -81,7 +81,7 @@ func parseNetwork(path string) (*Network, error) {
 			}
 			//check if 2 stations have the same coordinates
 			if otherStation, taken := coords[[2]int{x, y}]; taken {
-				return nil, fmt.Errorf("Error: stations %q and %q exist at the same coordinates %d,%d", otherStation, name, x, y)
+				return nil, fmt.Errorf("Error: stations %q and %q exist at the same coordinates (%d,%d)", otherStation, name, x, y)
 			}
 			coords[[2]int{x, y}] = name
 			net.index[name] = len(net.stationNames) //name -> index lookup, 0,1,2,3,..., because it set before appending name
@@ -97,8 +97,8 @@ func parseNetwork(path string) (*Network, error) {
 				return nil, fmt.Errorf("Error: invalid connection declaration on line %d: %q", lineNo, line)
 			}
 			rawConns = append(rawConns, rawConn{strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]), lineNo})
-		default:
-			return nil, fmt.Errorf("Error: line %d does not belong to a \"stations:\" or \"connections:\" section: %q", lineNo, line)
+			// default:
+			// 	return nil, fmt.Errorf("Error: line %d does not belong to a \"stations:\" or \"connections:\" section: %q", lineNo, line)
 		}
 	}
 	if !sawStations {
@@ -148,7 +148,7 @@ func validStationName(s string) bool {
 func parsePositiveInt(s string) (int, bool) {
 	n, err := strconv.Atoi(s)
 	if err != nil || n < 0 || strings.HasPrefix(s, "+") {
-		return 0, false
+		return n, false
 	}
 	return n, true
 }

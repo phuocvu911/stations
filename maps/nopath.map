@@ -6,6 +6,7 @@ victoria,6,7
 # north stations
 euston,1,5
 st_pancras,5,15 # international
+central, 4,5
 
 connections:
 waterloo -victoria

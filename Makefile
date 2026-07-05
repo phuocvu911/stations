@@ -28,3 +28,33 @@ trap:
 	go run . maps/london.map a b 
 15:
 	go run . maps/london.map a b 1 hello
+16:
+	go run . maps/big.map station0 station9999 100
+17:
+	go run . maps/london.map hive st_pancras 4
+18:
+	go run . maps/london.map waterloo hive 4
+19:
+	go run . maps/london.map waterloo waterloo 4
+20:
+	go run . maps/nopath.map waterloo central 4
+21:
+	go run . maps/dup.map waterloo st_pancras 4
+22:
+	go run . maps/london.map waterloo st_pancras -2
+23:
+	go run . maps/mixed.map two four 5
+24:
+	go run . maps/dupcoor.map waterloo st_pancras 4
+25:
+	go run . maps/25.map waterloo st_pancras 4
+26:
+	go run . maps/26.map waterloo st_pancras 4
+27:
+	go run . maps/27.map waterloo st_pancras 4
+28:
+	go run . maps/28.map waterloo st_pancras 4
+29:
+	go run . maps/29.map waterloo st_pancras 4
+30:
+	go run . maps/30.map waterloo st_pancras 4

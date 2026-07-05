@@ -8,7 +8,7 @@ euston,1,5
 st_pancras,5,15 # international
 
 connections:
-waterloo -victoria
+waterloo -hive
 waterloo- euston
 st_pancras-euston
 victoria-st_pancras

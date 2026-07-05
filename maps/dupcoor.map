@@ -1,6 +1,6 @@
 stations:
 # south stations
-waterloo  , 3 , 1
+waterloo  , 1,5
 victoria,6,7
 
 # north stations
