@@ -105,7 +105,6 @@ func decompose(m *trackMap, directedTracks []directedTrack, numStations, start, 
 		}
 	}
 
-	//extract every possible path from the map
 	for len(next[start]) > 0 {
 		cur := start
 		path := []int{start}
