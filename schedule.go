@@ -8,9 +8,9 @@ import (
 )
 
 type simTrain struct {
-	path int
-	pos  int
-	done bool
+	path int  //index of the route in paths slice
+	pos  int  //index of the station in the route,refered as paths[path]
+	done bool //true if the train has reached end station
 }
 
 // simulate runs the turns. Each route is a pipeline: one new train enters it
@@ -18,40 +18,56 @@ type simTrain struct {
 // stay one block apart and no track is reused within a turn. visit is called
 // once per turn with that turn's movements and every train created so far
 // (train Tn is trains[n-1]).
-func simulate(paths [][]int, counts []int, names []string, visit func(movements []string, trains []simTrain)) {
+func simulate(bestPaths [][]int, trainsEachPath []int, names []string) (lines [][]string) {
 	var trains []simTrain
-	dispatched := make([]int, len(paths))
+
+	//dispatched[i] tracks how many trains have already been sent onto paths[i]
+	dispatched := make([]int, len(bestPaths))
+
 	for {
 		var line []string
-		for ti := range trains {
-			t := &trains[ti]
-			if t.done {
+
+		//advance existing trains
+		for i := range trains {
+			train := &trains[i] //get a pointer to the train so we can modify it
+			if train.done {
 				continue
 			}
-			t.pos++
-			line = append(line, fmt.Sprintf("T%d-%s", ti+1, names[paths[t.path][t.pos]]))
-			if t.pos == len(paths[t.path])-1 {
-				t.done = true
+
+			train.pos++ //move the train forward one station along its route
+
+			line = append(line, fmt.Sprintf("T%d-%s", i+1, names[bestPaths[train.path][train.pos]]))
+
+			// If the new position is the last index of the path, the train has arrived
+			if train.pos == len(bestPaths[train.path])-1 {
+				train.done = true
 			}
 		}
-		for pi := range paths {
-			if dispatched[pi] < counts[pi] {
-				dispatched[pi]++
-				trains = append(trains, simTrain{path: pi, pos: 1, done: len(paths[pi]) == 2})
-				line = append(line, fmt.Sprintf("T%d-%s", len(trains), names[paths[pi][1]]))
+
+		//launch new trains
+		for i := range bestPaths {
+			if dispatched[i] < trainsEachPath[i] {
+				dispatched[i]++
+				trains = append(trains, simTrain{path: i, pos: 1, done: len(bestPaths[i]) == 2})
+				line = append(line, fmt.Sprintf("T%d-%s", len(trains), names[bestPaths[i][1]]))
 			}
 		}
+
+		//if no trains moved or were launched this turn, we're done
 		if len(line) == 0 {
 			break
 		}
-		visit(line, trains)
+		lines = append(lines, line)
 	}
+	return lines
 }
 
 func printSchedule(net *Network, paths [][]int, counts []int) {
 	w := bufio.NewWriter(os.Stdout)
 	defer w.Flush()
-	simulate(paths, counts, net.stationNames, func(movements []string, _ []simTrain) {
-		fmt.Fprintln(w, strings.Join(movements, " "))
-	})
+
+	lines := simulate(paths, counts, net.stationNames)
+	for _, line := range lines {
+		fmt.Fprintln(w, strings.Join(line, " "))
+	}
 }
