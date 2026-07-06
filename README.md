@@ -1,6 +1,6 @@
 # stations-pathfinder
 
-A command line pathfinder which moves trains across a rail network in the
+A command-line pathfinder that moves trains across a rail network in the
 minimum number of movement turns. Only one train may occupy an intermediate
 station at a time, and each track may be used once per turn.
 
@@ -69,22 +69,20 @@ go run . maps/london.map waterloo hakaniemi 4
 2026/07/05 19:34:18 Error: end station "hakaniemi" does not exist
 ```
 ### Suite of Tests
-A suite of tests has been created in advance in make file, covering the cases described in the school's testing tab.
-
-How to use: the test case is mark 1-30 based on the order of the testing cases.
+A suite of tests has been created in advance in a make file, covering the cases described in the school's testing tab.How to use: the test case is mark 1-30 based on the order of the testing cases.
 
 For example: you want to test this
 ```
 It finds more than one valid route for 3 trains between waterloo and st_pancras in the London Network Map.
 ```
-And it is number 3.
-
-In terminal:
+And it is task number 3 in the testing tab.
+In the terminal:
 ```
 make 3
 ```
+So on and so forth for the remaining test cases.
 ### Super Fast Performance
-try 
+Try 
 ```
 go run . maps/big.map station0 station9999 100
 ```
