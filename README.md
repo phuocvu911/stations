@@ -49,9 +49,6 @@ message starting with `Error:` and a non-zero exit code.
 4. **Simulate** (`schedule.go`): each turn, every en-route train advances one
    station and each route admits one new train, printing one line per turn.
 
-This handles large cyclic maps gracefully: a 10,000-station map with 30,000
-connections schedules 100 trains in well under a second.
-
 ## Extras
 
 ### Super Advanced Error Handling
@@ -82,7 +79,7 @@ make 3
 ```
 So on and so forth for the remaining test cases.
 ### Super Fast Performance
-Try 
+Try:
 ```
 go run . maps/big.map station0 station9999 100
 ```
