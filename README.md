@@ -68,8 +68,21 @@ go run . maps/london.map waterloo hakaniemi 4
 
 2026/07/05 19:34:18 Error: end station "hakaniemi" does not exist
 ```
-### Suits of Tests
+### Suite of Tests
+A suite of tests has been created in advance in make file, covering the cases described in the school's testing tab.
 
+How to use: the test case is mark 1-30 based on the order of the testing cases.
+
+For example: you want to test this
+```
+It finds more than one valid route for 3 trains between waterloo and st_pancras in the London Network Map.
+```
+And it is number 3.
+
+In terminal:
+```
+make 3
+```
 ### Super Fast Performance
 try 
 ```
