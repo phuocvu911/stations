@@ -1,9 +1,5 @@
 package main
 
-// Min-cost flow on the node-split network. Every intermediate station has
-// capacity 1, so each unit of flow is one vertex-disjoint route and each
-// augmentation yields the cheapest set of k routes by total length.
-
 // road from a to b
 type track struct {
 	to       int
