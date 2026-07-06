@@ -13,8 +13,7 @@ type directedTrack struct {
 
 // planMovements finds the set of vertex-disjoint routes (non-overlapping) and the number of
 // trains to send down each route which together minimise the number of
-// movement turns. It tries every route-set size k (the cheapest k routes by
-// total length, via successive shortest augmentations), because adding a
+// turns. It tries every route-set, because adding a
 // longer route only pays off when enough trains share the load.
 func planMovements(net *Network, start, end, numTrains int) (bestPaths [][]int, trainsEachPath []int, ok bool) {
 	numStations := len(net.stationNames)
