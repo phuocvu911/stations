@@ -91,6 +91,7 @@ func (m *trackMap) FindPath(start, end int) (int, bool) {
 
 	//walk the path from end to start, spending one unit of capacity on each
 	//forward track and returning it to the paired reverse track, mimic ptr behaveior
+	// mark the forward as used and free the phantom, see the creation
 	for station := end; station != start; {
 		trackIdx := prevEdges[station]
 		m.tracks[trackIdx].capacity--     //mark the forward track as used
