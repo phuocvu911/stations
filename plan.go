@@ -131,19 +131,18 @@ func decompose(m *trackMap, directedTracks []directedTrack, numStations, start, 
 // over routes of the given lengths: a route of length L pipelines one train
 // per turn, so within T turns it delivers T-L+1 trains. -> T= N+L-1
 func minTurns(lengths []int, numTrains int) (turns int) {
-	shortestLength := lengths[0]
+	leastTurn := lengths[0] //if we send only 1 train, the minimum possible turns is the length (min hops) of the shortest path
 
 	//binary search for the minimum number of turns needed to deliver numTrains, x is ranged [0,numTrains)
 	i := sort.Search(numTrains, func(x int) bool {
-		return totalTrains(lengths, shortestLength+x) >= numTrains
+		return totalTrains(lengths, leastTurn+x) >= numTrains
 	})
-	turns = shortestLength + i
+	turns = leastTurn + i
 	return turns
 }
 
 // totalTrains returns the total number of trains that can be delivered within the given turns
-func totalTrains(lengths []int, turns int) int {
-	total := 0
+func totalTrains(lengths []int, turns int) (total int) {
 	for _, length := range lengths {
 		if turns >= length {
 			total += turns - length + 1
