@@ -50,6 +50,7 @@ func run(args []string) error {
 	if !ok {
 		return fmt.Errorf("Error: no path exists between %q and %q", startName, endName)
 	}
+	//fmt.Println(bestPaths, trainsEachPath)
 
 	printSchedule(net, bestPaths, trainsEachPath)
 	return nil
