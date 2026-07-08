@@ -38,13 +38,12 @@ func (m *trackMap) AddTrack(from, to, capacity, cost int) int {
 
 const infCost = int(1) << 60
 
-// This function dispatches one train from start station to end station along the
-// cheapest open route, and marks that route as used. It returns (how far the train
-// traveled, did it make it?)
+// FindPath dispatches one train from start station to end station along the
+// cheapest open route, and marks that route as used. It returns total cost and boolean
+// indicating whether a path was found. If no path is found, the trackMap is unchanged.
 func (m *trackMap) FindPath(start, end int) (int, bool) {
 	distances := make([]int, m.numStations)
 	prevEdges := make([]int, m.numStations)
-	inQueue := make([]bool, m.numStations)
 
 	//start dumb, every station is unreachable and we came from nowhere at first
 	for i := range distances {
@@ -54,16 +53,16 @@ func (m *trackMap) FindPath(start, end int) (int, bool) {
 	//distance from start to start is 0
 	distances[start] = 0
 	queue := []int{start}
-	inQueue[start] = true
 
 	//find the shortest path from start to end using a modified Bellman-Ford (SPFA) algorithm
 	for len(queue) > 0 {
 		station := queue[0]
 		queue = queue[1:]
-		inQueue[station] = false
+
 		trackIdxs := m.adjacency[station]
 		for _, trackIdx := range trackIdxs {
 			track := m.tracks[trackIdx]
+
 			//if the track is full or the new distance is not better, skip it
 			if track.capacity <= 0 || distances[station]+track.cost >= distances[track.to] {
 				continue
@@ -73,10 +72,8 @@ func (m *trackMap) FindPath(start, end int) (int, bool) {
 			//which is literally means "we use this track to get to end station"
 			distances[track.to] = distances[station] + track.cost
 			prevEdges[track.to] = trackIdx
-			if !inQueue[track.to] {
-				queue = append(queue, track.to)
-				inQueue[track.to] = true
-			}
+
+			queue = append(queue, track.to) //add the station to the queue for further exploration
 		}
 	}
 
