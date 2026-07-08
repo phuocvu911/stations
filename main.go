@@ -5,11 +5,10 @@ import (
 	"log"
 	"os"
 	"strconv"
-	//"time"
 )
 
 func main() {
-	//start := time.Now()
+	// start := time.Now()
 	if err := run(os.Args[1:]); err != nil {
 		log.Fatal(err)
 	}
