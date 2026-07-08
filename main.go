@@ -5,12 +5,16 @@ import (
 	"log"
 	"os"
 	"strconv"
+	//"time"
 )
 
 func main() {
+	//start := time.Now()
 	if err := run(os.Args[1:]); err != nil {
 		log.Fatal(err)
 	}
+	// duration := time.Since(start)
+	// fmt.Println(duration)
 }
 
 func run(args []string) error {

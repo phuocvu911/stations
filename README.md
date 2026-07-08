@@ -83,5 +83,5 @@ Try:
 ```
 go run . maps/big.map station0 station9999 100
 ```
-This is the map with 10,000 stations and 30,000 connections. The program will finish in less than a second.
+This is the map with 10,000 stations and 30,000 connections. The program will finish in less than 20ms.
 ### Bonus
