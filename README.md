@@ -1,8 +1,10 @@
 # stations-pathfinder
 
-A command-line pathfinder that moves trains across a rail network in the
-minimum number of movement turns. Only one train may occupy an intermediate
-station at a time, and each track may be used once per turn.
+A command-line pathfinder that moves trains across a rail network in the minimum number of movement turns. Only one train may occupy an intermediate station at a time, and each track may be used once per turn.
+
+## Requirement
+
+Go 1.26+
 
 ## Usage
 
@@ -26,26 +28,20 @@ T1-st_pancras T2-st_pancras T3-victoria T4-euston
 T3-st_pancras T4-st_pancras
 ```
 
-Each output line is one turn; `T1-victoria` means train T1 moves to
-victoria during that turn. All errors are reported on stderr with a
-message starting with `Error:` and a non-zero exit code.
+Each output line is one turn; `T1-victoria` means train T1 moves to victoria during that turn. All errors are reported on stderr.
 
 ## How it works
 
-1. **Parse** the map (`parse.go`): sections, comments, whitespace, and all
-   the validation rules (names, coordinates, duplicates, 10k-station limit,
-   connections to unknown stations, duplicate/reversed connections, ...). Station name got indexed for even better performance.
-2. **Find routes** (`flow.go`, `plan.go`): the network is turned into a flow
-   graph where every intermediate station is split into an in/out node pair
-   of capacity 1, so one unit of flow is one vertex-disjoint route.
-   Successive cheapest augmentations (SPFA min-cost flow, which can re-route
-   earlier paths through residual edges) yield, for every k, the k disjoint
-   routes with the smallest total length.
-3. **Pick the best plan** (`plan.go`): a route of length L delivers
-   `T - L + 1` trains within T turns, since trains pipeline one block apart.
-   For each candidate route set the minimal T moving all trains is computed,
-   and the best set wins. The search stops as soon as new routes are too
-   long to ever help.
+1. **Parse** the map (`parse.go`): sections, comments, whitespace, and all the validation rules (names, coordinates, duplicates, 10k-station limit,
+   connections to unknown stations, duplicate/reversed connections, ...) got validated. Station name got indexed for even better performance.
+
+2. **Find routes** (`flow.go`, `plan.go`): the network is turned into a flow graph where every station is split into an in/out node pair
+   of capacity 1, to mimic the requirement of only 1 train at 1 intermediate station at a time.
+   SPFA ([Shortest Path Faster Algorithm](https://www.geeksforgeeks.org/dsa/shortest-path-faster-algorithm/)) is used to find the shortest path from start to end, and the found route is marked as "used" in the graph. The process repeats until no more routes can be found.
+
+3. **Pick the best plan** (`plan.go`): a route of length L delivers `T - L + 1` trains within T turns, since trains pipeline one block apart.
+   For each candidate route set, the minimal turn is computed,and the set leading to the minimum turns wins. It also assigns each path to an appropriate number of trains.
+
 4. **Simulate** (`schedule.go`): each turn, every en-route train advances one
    station and each route admits one new train, printing one line per turn.
 

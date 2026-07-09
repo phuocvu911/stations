@@ -9,11 +9,13 @@ import (
 
 func main() {
 	// start := time.Now()
+	// defer func() {
+	// 	fmt.Printf("Execution time: %s\n", time.Since(start))
+	// }()
+
 	if err := run(os.Args[1:]); err != nil {
 		log.Fatal(err)
 	}
-	// duration := time.Since(start)
-	// fmt.Println(duration)
 }
 
 func run(args []string) error {

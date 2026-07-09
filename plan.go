@@ -82,7 +82,7 @@ func planMovements(net *Network, start, end, numTrains int) (bestPaths [][]int, 
 func decompose(m *trackMap, directedTracks []directedTrack, numStations, start, end int) (paths [][]int) {
 	used := make(map[[2]int]bool)
 	for _, directedTrack := range directedTracks {
-		if m.tracks[directedTrack.idx].capacity == 0 {
+		if m.tracks[directedTrack.idx].capacity == 0 { //if the track is used, it means the capacity is 0
 			used[[2]int{directedTrack.from, directedTrack.to}] = true
 		}
 	}
