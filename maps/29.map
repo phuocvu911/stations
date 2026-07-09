@@ -1,8 +1,3 @@
-waterloo -victoria
-waterloo- euston
-st_pancras-euston
-victoria-st_pancras
-
 stations:
 # south stations
 waterloo  , 3 , 1
@@ -11,5 +6,10 @@ victoria,6,7
 # north stations
 euston,1,5
 st_pancras,5,15 # international
+
+waterloo -victoria
+waterloo- euston
+st_pancras-euston
+victoria-st_pancras
 
 
