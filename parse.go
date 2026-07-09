@@ -35,17 +35,20 @@ func parseNetwork(path string) (*Network, error) {
 	var rawConns []rawConn
 	section := ""
 	sawStations, sawConns := false, false
-	for i, raw := range strings.Split(string(data), "\n") {
+
+	for i, line := range strings.Split(string(data), "\n") {
 		lineNo := i + 1
-		line := raw
+
 		//skip everything after '#'
 		if j := strings.IndexByte(line, '#'); j >= 0 {
 			line = line[:j]
 		}
 		line = strings.TrimSpace(line)
+
 		if line == "" {
 			continue
 		}
+
 		if line == "stations:" {
 			if sawStations {
 				return nil, fmt.Errorf("Error: duplicate \"stations:\" section on line %d", lineNo)
@@ -53,6 +56,7 @@ func parseNetwork(path string) (*Network, error) {
 			sawStations, section = true, "stations"
 			continue
 		}
+
 		if line == "connections:" {
 			if sawConns {
 				return nil, fmt.Errorf("Error: duplicate \"connections:\" section on line %d", lineNo)
@@ -60,6 +64,7 @@ func parseNetwork(path string) (*Network, error) {
 			sawConns, section = true, "connections"
 			continue
 		}
+
 		switch section {
 		case "stations":
 			parts := strings.Split(line, ",")
@@ -101,14 +106,18 @@ func parseNetwork(path string) (*Network, error) {
 			// 	return nil, fmt.Errorf("Error: line %d does not belong to a \"stations:\" or \"connections:\" section: %q", lineNo, line)
 		}
 	}
+
 	if !sawStations {
 		return nil, fmt.Errorf("Error: the map does not contain a \"stations:\" section")
 	}
+
 	if !sawConns {
 		return nil, fmt.Errorf("Error: the map does not contain a \"connections:\" section")
 	}
+
 	net.adj = make([][]int, len(net.stationNames))
 	connSeen := make(map[[2]int]bool)
+
 	for _, rc := range rawConns {
 		ia, okA := net.index[rc.a]
 		if !okA {
@@ -147,7 +156,7 @@ func validStationName(s string) bool {
 
 func parsePositiveInt(s string) (int, bool) {
 	n, err := strconv.Atoi(s)
-	if err != nil || n < 0 || strings.HasPrefix(s, "+") {
+	if err != nil || n < 0 /*|| strings.HasPrefix(s, "+")*/ {
 		return n, false
 	}
 	return n, true
