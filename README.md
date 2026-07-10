@@ -62,7 +62,7 @@ go run . maps/london.map waterloo hakaniemi 4
 2026/07/05 19:34:18 Error: end station "hakaniemi" does not exist
 ```
 ### Suite of Tests
-A suite of tests has been created in advance in a make file, covering the cases described in the school's testing tab.How to use: the test case is mark 1-30 based on the order of the testing cases.
+A suite of tests has been created in advance in a make file, covering the cases described in the school's testing tab.How to use: the test case is mark 2-30 based on the order of the testing cases.
 
 For example: you want to test this
 ```
