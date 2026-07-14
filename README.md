@@ -74,6 +74,8 @@ In the terminal:
 make 3
 ```
 So on and so forth for the remaining test cases.
+
+However, if you are looking for Go test cases, you can find them in the `main_test.go` file. The test cases are named as `TestCaseN` where N is the number from 2 to 30.
 ### Super Fast Performance
 Try:
 ```

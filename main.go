@@ -7,6 +7,8 @@ import (
 	"strconv"
 )
 
+const maxTrains = 100000
+
 func main() {
 	// start := time.Now()
 	// defer func() {
@@ -28,6 +30,9 @@ func run(args []string) error {
 	numTrains, err := strconv.Atoi(args[3])
 	if err != nil || numTrains <= 0 {
 		return fmt.Errorf("Error: number of trains (%d) is not a valid positive integer", numTrains)
+	}
+	if numTrains > maxTrains {
+		return fmt.Errorf("Error: number of trains (%d) exceeds maximum allowed (%d)", numTrains, maxTrains)
 	}
 
 	net, err := parseNetwork(mapPath)
