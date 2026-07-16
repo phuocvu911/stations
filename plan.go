@@ -160,16 +160,19 @@ func assignTrains(paths [][]int, numTrains, turns int) []int {
 	//calculate how many trains with these setups can move, some times it is bigger than numTrains
 	total := 0
 	for i, p := range paths {
-		trainsCount := max(turns-(len(p)-1)+1, 0)
+		trainsCount := turns - (len(p) - 1) + 1
 		trainsEachPath[i] = trainsCount
 		total += trainsCount
 	}
 
 	//trim the longest routes first until we have exactly numTrains trains
-	for i := len(trainsEachPath) - 1; i >= 0 && total > numTrains; i-- {
-		d := min(trainsEachPath[i], total-numTrains)
-		trainsEachPath[i] -= d
-		total -= d
-	}
+	// for i := len(trainsEachPath) - 1; i >= 0 && total > numTrains; i-- {
+	// 	d := min(trainsEachPath[i], total-numTrains)
+	// 	trainsEachPath[i] -= d
+	// 	total -= d
+	// }
+
+	//trim the excessive number of trains in the longest path
+	trainsEachPath[len(trainsEachPath)-1] -= total - numTrains
 	return trainsEachPath
 }
