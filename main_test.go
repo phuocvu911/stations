@@ -15,8 +15,7 @@ func TestCase2(t *testing.T) {
 
 	expected := `T1-victoria T2-euston
 T1-st_pancras T2-st_pancras`
-	// Add assertions based on expected output
-	// For example, check if the output contains expected results
+
 	if !strings.Contains(string(output), expected) {
 		t.Errorf("Expected output not found. Got: %s", output)
 	}
@@ -64,6 +63,7 @@ T1-st_pancras T2-st_pancras T3-victoria T4-euston
 T3-st_pancras T4-st_pancras T5-victoria T6-euston
 T5-st_pancras T6-st_pancras T7-victoria T8-euston
 T7-st_pancras T8-st_pancras T9-victoria T10-euston`
+	
 	if !strings.Contains(string(output), expected) {
 		t.Errorf("Expected output not found. Got: %s", output)
 	}
@@ -78,6 +78,7 @@ func TestCase6(t *testing.T) {
 
 	expected := `T1-victoria
 T1-st_pancras`
+	
 	if !strings.Contains(string(output), expected) {
 		t.Errorf("Expected output not found. Got: %s", output)
 	}
@@ -93,6 +94,7 @@ func TestCase7(t *testing.T) {
 	expected := `T1-victoria T2-euston
 T1-st_pancras T2-st_pancras T3-victoria T4-euston
 T3-st_pancras T4-st_pancras`
+	
 	if !strings.Contains(string(output), expected) {
 		t.Errorf("Expected output not found. Got: %s", output)
 	}
@@ -111,6 +113,7 @@ T1-space_port T2-orange_junction T3-apple_avenue
 T2-space_port T3-orange_junction T4-apple_avenue
 T3-space_port T4-orange_junction
 T4-space_port`
+	
 	if !strings.Contains(string(output), expected) {
 		t.Errorf("Expected output not found. Got: %s", output)
 	}
@@ -131,6 +134,7 @@ T1-desert T2-desert T3-desert T4-wetlands T5-industrial T6-treetop T7-clouds T8-
 T4-desert T5-desert T6-desert T7-wetlands T8-industrial T9-clouds T10-metropolis
 T7-desert T8-desert T9-wetlands T10-industrial
 T9-desert T10-desert`
+	
 	if !strings.Contains(string(output), expected) {
 		t.Errorf("Expected output not found. Got: %s", output)
 	}
@@ -154,6 +158,7 @@ T12-terminus T14-far T15-terminus T16-near
 T14-terminus T16-far T17-terminus T18-near
 T16-terminus T18-far T19-terminus
 T18-terminus T20-terminus`
+	
 	if !strings.Contains(string(output), expected) {
 		t.Errorf("Expected output not found. Got: %s", output)
 	}
@@ -172,6 +177,7 @@ T1-four T2-one T3-three
 T2-four T3-one T4-three
 T3-four T4-one
 T4-four`
+	
 	if !strings.Contains(string(output), expected) {
 		t.Errorf("Expected output not found. Got: %s", output)
 	}
@@ -190,6 +196,7 @@ T2-part T3-part T4-mozart T5-verdi T6-handel
 T4-part T5-part T6-mozart T7-verdi T8-handel
 T6-part T7-part T8-mozart T9-verdi
 T8-part T9-part`
+	
 	if !strings.Contains(string(output), expected) {
 		t.Errorf("Expected output not found. Got: %s", output)
 	}
@@ -210,6 +217,7 @@ T2-22 T3-04 T4-large T5-21 T6-12 T7-15 T8-11 T9-10
 T2-large T3-05 T5-22 T6-large T7-21 T8-12 T9-11
 T3-large T5-large T7-22 T8-large T9-12
 T7-large T9-large`
+	
 	if !strings.Contains(string(output), expected) {
 		t.Errorf("Expected output not found. Got: %s", output)
 	}
@@ -248,7 +256,6 @@ func TestCase16(t *testing.T) {
 		t.Fatalf("Command failed: %v\nOutput: %s", err, output)
 	}
 
-	// Just check that it produces some output (the big map works fine)
 	if len(output) == 0 {
 		t.Errorf("Expected some output, but got empty output")
 	}
