@@ -21,7 +21,6 @@ func main() {
 }
 
 func run(args []string) error {
-	args, _ = extractBonusFlag(args)
 	if len(args) != 4 {
 		return fmt.Errorf("Error: incorrect number of command line arguments\nUsage: go run . [path to network map] [start station] [end station] [number of trains]")
 	}

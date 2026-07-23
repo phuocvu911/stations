@@ -76,10 +76,18 @@ make 3
 So on and so forth for the remaining test cases.
 
 However, if you are looking for Go test cases, you can find them in the `main_test.go` file. The test cases are named as `TestCaseN` where N is the number from 2 to 30.
+
+```
+go test -run TestCaseN
+```
+Or to run all the test cases at once:
+```
+go test -v
+```
+
 ### Super Fast Performance
 Try:
 ```
 go run . maps/big.map station0 station9999 100
 ```
 This is the map with 10,000 stations and 30,000 connections. The program will finish in less than 0.5s.
-### Bonus
